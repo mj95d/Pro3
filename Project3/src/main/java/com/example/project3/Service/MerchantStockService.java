@@ -1,7 +1,12 @@
 package com.example.project3.Service;
 
+import com.example.springbootproject.Model.Merchant;
+import com.example.springbootproject.Model.MerchantStock;
+import com.example.springbootproject.Model.Product;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 
+import java.util.ArrayList;
 @Service
 public class MerchantStockService {
     private final ProductService productService;
@@ -22,7 +27,7 @@ public class MerchantStockService {
 
     public void add(MerchantStock merchantStock){
         if(getProduct(merchantStock) && getMerchant(merchantStock))
-            merchantStocks.add(merchantStock);
+        merchantStocks.add(merchantStock);
     }
 
     public boolean update(int id, MerchantStock merchantStock){
