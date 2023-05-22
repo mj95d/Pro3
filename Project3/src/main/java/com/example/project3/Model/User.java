@@ -1,14 +1,12 @@
 package com.example.project3.Model;
 
+
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Value;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.factory.annotation.Value;
 
 @AllArgsConstructor
 @Data
@@ -23,15 +21,16 @@ public class User {
     private String userName;
 
     @NotEmpty(message = "password must not be empty")
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,}", message = "Password must be 6 characters long and combination of uppercase letters, lowercase letters, numbers.")
+    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$", message = "Password must be 6 characters long and combination of uppercase letters, lowercase letters, numbers.")
     private String password;
 
     @NotEmpty(message = "email must not be empty")
     @Email(message = "email must be valid email")
     private String email;
 
-
+    //Test2
     @NotEmpty(message = "role must not be empty")
+    @Value("Admin")
     @Valid
     private String role;
 
