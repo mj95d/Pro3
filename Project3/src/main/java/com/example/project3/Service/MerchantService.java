@@ -1,7 +1,12 @@
 package com.example.project3.Service;
 
-import org.springframework.stereotype.Service;
 
+import com.example.springbootproject.Model.Category;
+import com.example.springbootproject.Model.Merchant;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
+
+import java.util.ArrayList;
 @Service
 public class MerchantService {
     ArrayList<Merchant> merchants = new ArrayList<>();
