@@ -1,7 +1,12 @@
 package com.example.project3.Service;
 
+import com.example.springbootproject.Model.Merchant;
+import com.example.springbootproject.Model.Product;
+import com.example.springbootproject.Model.User;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 
+import java.util.ArrayList;
 @Service
 public class UserService {
     private final MerchantStockService merchantStockService;
@@ -19,7 +24,7 @@ public class UserService {
     }
 
     public void add(User user){
-        users.add(user);
+            users.add(user);
     }
 
     public boolean update(int id, User user){
