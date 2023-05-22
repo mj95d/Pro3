@@ -1,7 +1,14 @@
 package com.example.project3.Controller;
 
+import com.example.springbootproject.ApiMessage.ApiMessage;
+import com.example.springbootproject.Model.Category;
+import com.example.springbootproject.Services.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/v1/category")
@@ -29,7 +36,7 @@ public class CategoryController {
         return ResponseEntity.status(200).body(new ApiMessage("Success"));
     }
 
-    @PutMapping"/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Category category, Errors errors){
         if(getAllErrors(errors) != null){
             return ResponseEntity.status(400).body(getAllErrors(errors));
