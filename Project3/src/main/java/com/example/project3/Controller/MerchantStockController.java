@@ -1,7 +1,15 @@
 package com.example.project3.Controller;
 
+
+import com.example.springbootproject.ApiMessage.ApiMessage;
+import com.example.springbootproject.Model.MerchantStock;
+import com.example.springbootproject.Services.MerchantStockService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/v1/merchantStock")
@@ -59,7 +67,7 @@ public class MerchantStockController {
         return ResponseEntity.status(200).body(new ApiMessage("Success"));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable int id){
         if( this.merchantStockService.delete(id)) {
             return ResponseEntity.status(200).body(new ApiMessage("Success"));
