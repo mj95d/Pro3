@@ -1,7 +1,12 @@
 package com.example.project3.Service;
 
-import org.springframework.stereotype.Service;
 
+import com.example.springbootproject.Model.Category;
+import com.example.springbootproject.Model.Product;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
+
+import java.util.ArrayList;
 @Service
 public class ProductService {
     private final CategoryService categoryService;
@@ -17,8 +22,8 @@ public class ProductService {
     }
 
     public void add(Product product){
-        if(getCategory(product))
-            products.add(product);
+           if(getCategory(product))
+               products.add(product);
     }
 
     public boolean update(int id, Product product){
