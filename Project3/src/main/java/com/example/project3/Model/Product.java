@@ -7,23 +7,33 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-@AllArgsConstructor
+mport lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
 
-    @NotEmpty(message = "id must not be empty")
-    @Length(min = 3, message = "id have to be 3 character long")
+    @NotEmpty(message = "ID must not be empty")
+    @Size(min = 3, message = "ID must be at least 3 characters long")
     private String id;
 
-    @NotEmpty(message = "name must not be empty")
-    @Length(min = 3, message = "name have to be 3 length long")
+    @NotEmpty(message = "Name must not be empty")
+    @Size(min = 3, message = "Name must be at least 3 characters long")
     private String name;
 
-    @NotEmpty(message = "price must not be empty")
-    @Positive(message = "price must be positive number")
+    @NotEmpty(message = "Price must not be empty")
+    @Positive(message = "Price must be a positive number")
     private String price;
 
-    @NotEmpty(message = "categoryID must not be empty")
-    @Length(min = 3, message = "categoryID have to be 3 character long")
+    @NotEmpty(message = "Category ID must not be empty")
+    @Size(min = 3, message = "Category ID must be at least 3 characters long")
     private String categoryID;
+
 }
