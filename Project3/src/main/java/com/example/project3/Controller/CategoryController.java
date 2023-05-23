@@ -17,51 +17,49 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @GetMapping("/getAll")
-    public ResponseEntity getAll(){
-        ArrayList<Category> categories = this.categoryService.getAll();
-        return ResponseEntity.status(200).body(categories);
+    @GetMapping("/all")
+    public ResponseEntity<List<Category>> getAllCategories() {
+        List<Category> categories = categoryService.getAll();
+        return ResponseEntity.ok(categories);
     }
 
     @PostMapping("/add")
-    public ResponseEntity add(@Valid @RequestBody Category category, Errors errors){
-        if(getAllErrors(errors) != null){
-            return ResponseEntity.status(400).body(getAllErrors(errors));
+    public ResponseEntity<?> addCategory(@Valid @RequestBody Category category, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(getAllErrors(errors));
         }
-        if(this.categoryService.checkId(Integer.parseInt(category.getId())) != null){
-            return ResponseEntity.status(400).body(new ApiMessage(this.categoryService.checkId(Integer.parseInt(category.getId()))));
+        if (categoryService.checkId(Integer.parseInt(category.getId())) != null) {
+            return ResponseEntity.badRequest().body(new ApiMessage(categoryService.checkId(Integer.parseInt(category.getId()))));
         }
 
-        this.categoryService.add(category);
-        return ResponseEntity.status(200).body(new ApiMessage("Success"));
+        categoryService.add(category);
+        return ResponseEntity.ok(new ApiMessage("Success"));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Category category, Errors errors){
-        if(getAllErrors(errors) != null){
-            return ResponseEntity.status(400).body(getAllErrors(errors));
+    public ResponseEntity<?> updateCategory(@PathVariable int id, @Valid @RequestBody Category category, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(getAllErrors(errors));
         }
 
-        if(!this.categoryService.update(id, category)){
-            return ResponseEntity.status(400).body(new ApiMessage("this id is not Exist"));
+        if (!categoryService.update(id, category)) {
+            return ResponseEntity.badRequest().body(new ApiMessage("this id does not exist"));
         }
 
-        return ResponseEntity.status(200).body(new ApiMessage("Success"));
+        return ResponseEntity.ok(new ApiMessage("Success"));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@PathVariable int id){
-        if( this.categoryService.delete(id)) {
-            this.categoryService.delete(id);
-            return ResponseEntity.status(200).body(new ApiMessage("Success"));
+    public ResponseEntity<?> deleteCategory(@PathVariable int id) {
+        if (categoryService.delete(id)) {
+            return ResponseEntity.ok(new ApiMessage("Success"));
         }
-        return ResponseEntity.status(400).body(new ApiMessage("BadRequest"));
+        return ResponseEntity.badRequest().body(new ApiMessage("BadRequest"));
     }
 
-    public ArrayList<String> getAllErrors(Errors errors){
-        ArrayList<String> getAllErrors = this.categoryService.checkErrors(errors);
-        return getAllErrors;
+    private List<String> getAllErrors(Errors errors) {
+        List<String> allErrors = new ArrayList<>();
+        errors.getAllErrors().forEach(error -> allErrors.add(error.getDefaultMessage()));
+        return allErrors;
     }
-
-
 }
