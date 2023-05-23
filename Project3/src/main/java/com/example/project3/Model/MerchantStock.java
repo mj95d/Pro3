@@ -6,23 +6,25 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MerchantStock {
 
-    @NotEmpty(message = "id must not be empty")
-    @Length(min = 3, message = "id have to be 3 character long")
+    @NotEmpty(message = "ID must not be empty")
+    @Size(min = 3, message = "ID must be at least 3 characters long")
     private String id;
 
-    @NotEmpty(message = "productId must not be null")
-    @Length(min = 3, message = "productId have to be 3 character long")
+    @NotEmpty(message = "Product ID must not be empty")
+    @Size(min = 3, message = "Product ID must be at least 3 characters long")
     private String productId;
 
-    @NotEmpty(message = "merchantId must not be null")
-    @Length(min = 3, message = "merchantId have to be 3 character long")
+    @NotEmpty(message = "Merchant ID must not be empty")
+    @Size(min = 3, message = "Merchant ID must be at least 3 characters long")
     private String merchantId;
 
-    @NotEmpty(message = "stock must not be empty")
-    @Length(min = 10, message = "stock have to be more than 10 at start")
+    @NotEmpty(message = "Stock must not be empty")
+    @Size(min = 10, message = "Stock must be at least 10 characters long")
     private String stock;
+
 }
