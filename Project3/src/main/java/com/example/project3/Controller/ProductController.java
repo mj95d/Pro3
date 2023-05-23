@@ -19,58 +19,58 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/getAll")
-    public ResponseEntity getAll(){
-        ArrayList<Product> products = this.productService.getAll();
-        return ResponseEntity.status(200).body(products);
+    @GetMapping("/all")
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAll();
+        return ResponseEntity.ok(products);
     }
 
     @PostMapping("/add")
-    public ResponseEntity add(@Valid @RequestBody Product product, Errors errors){
-        if(getAllErrors(errors) != null){
-            return ResponseEntity.status(400).body(getAllErrors(errors));
+    public ResponseEntity<?> addProduct(@Valid @RequestBody Product product, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(getAllErrors(errors));
         }
 
-        if(this.productService.checkId(Integer.parseInt(product.getId())) != null){
-            return ResponseEntity.status(400).body(new ApiMessage(this.productService.checkId(Integer.parseInt(product.getId()))));
+        if (productService.checkId(Integer.parseInt(product.getId())) != null) {
+            return ResponseEntity.badRequest().body(new ApiMessage(productService.checkId(Integer.parseInt(product.getId()))));
         }
 
-        if(!this.productService.getCategory(product)){
-            return ResponseEntity.status(400).body(new ApiMessage("This categoryID not found"));
+        if (!productService.getCategory(product)) {
+            return ResponseEntity.badRequest().body(new ApiMessage("Category not found"));
         }
 
-        this.productService.add(product);
-        return ResponseEntity.status(200).body(new ApiMessage("Success"));
+        productService.add(product);
+        return ResponseEntity.ok(new ApiMessage("Success"));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Product product, Errors errors){
-
-        if(getAllErrors(errors) != null){
-            return ResponseEntity.status(400).body(getAllErrors(errors));
+    public ResponseEntity<?> updateProduct(@PathVariable int id, @Valid @RequestBody Product product, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(getAllErrors(errors));
         }
 
-        if(!this.productService.getCategory(product)){
-            return ResponseEntity.status(400).body(new ApiMessage("This categoryID not found"));
+        if (!productService.getCategory(product)) {
+            return ResponseEntity.badRequest().body(new ApiMessage("Category not found"));
         }
 
-        if(!productService.update(id, product)) {
-            return ResponseEntity.status(400).body(new ApiMessage("BadRequest"));
+        if (!productproductService.update(id, product)) {
+            return ResponseEntity.badRequest().body(new ApiMessage("Product not found"));
         }
-        return ResponseEntity.status(200).body(new ApiMessage("Success"));
+
+        return ResponseEntity.ok(new ApiMessage("Success"));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@PathVariable int id){
-        if(productService.delete(id)) {
-            return ResponseEntity.status(200).body(new ApiMessage("Success"));
+    public ResponseEntity<?> deleteProduct(@PathVariable int id) {
+        if (productService.delete(id)) {
+            return ResponseEntity.ok(new ApiMessage("Success"));
         }
-        return ResponseEntity.status(400).body(new ApiMessage("BadRequest"));
-    }
-    public ArrayList<String> getAllErrors(Errors errors){
-        ArrayList<String> getAllErrors = this.productService.checkErrors(errors);
-        return getAllErrors;
+        return ResponseEntity.badRequest().body(new ApiMessage("Product not found"));
     }
 
-
+    private List<String> getAllErrors(Errors errors) {
+        List<String> allErrors = new ArrayList<>();
+        errors.getAllErrors().forEach(error -> allErrors.add(error.getDefaultMessage()));
+        return allErrors;
+    }
 }
