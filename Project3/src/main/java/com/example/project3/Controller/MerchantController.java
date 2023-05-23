@@ -8,56 +8,56 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
-
 @RestController
 @RequestMapping("/api/v1/merchant")
 @RequiredArgsConstructor
 public class MerchantController {
+
     private final MerchantService merchantService;
 
-    @GetMapping("/getAll")
-    public ResponseEntity getAll(){
-        ArrayList<Merchant> merchants = this.merchantService.getAll();
-        return ResponseEntity.status(200).body(merchants);
+    @GetMapping("/all")
+    public ResponseEntity<List<Merchant>> getAllMerchants() {
+        List<Merchant> merchants = merchantService.getAll();
+        return ResponseEntity.ok(merchants);
     }
 
     @PostMapping("/add")
-    public ResponseEntity add(@Valid @RequestBody Merchant merchant, Errors errors){
-        if(getAllErrors(errors) != null){
-            return ResponseEntity.status(400).body(getAllErrors(errors));
+    public ResponseEntity<?> addMerchant(@Valid @RequestBody Merchant merchant, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(getAllErrors(errors));
+        }
+        if (merchantService.checkId(Integer.parseInt(merchant.getId())) != null) {
+            return ResponseEntity.badRequest().body(new ApiMessage(merchantService.checkId(Integer.parseInt(merchant.getId()))));
         }
 
-        if(this.merchantService.checkId(Integer.parseInt(merchant.getId())) != null){
-            return ResponseEntity.status(400).body(new ApiMessage(this.merchantService.checkId(Integer.parseInt(merchant.getId()))));
-        }
-
-        this.merchantService.add(merchant);
-        return ResponseEntity.status(200).body(new ApiMessage("Success"));
+        merchantService.add(merchant);
+        return ResponseEntity.ok(new ApiMessage("Success"));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Merchant merchant, Errors errors){
-        if(getAllErrors(errors) != null){
-            return ResponseEntity.status(400).body(getAllErrors(errors));
+    public ResponseEntity<?> updateMerchant(@PathVariable int id, @Valid @RequestBody Merchant merchant, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(getAllErrors(errors));
         }
 
-        if(!this.merchantService.update(id, merchant)){
-            return ResponseEntity.status(400).body(new ApiMessage("this id is not Exist"));
+        if (!merchantService.update(id, merchant)) {
+            return ResponseEntity.badRequest().body(new ApiMessage("this id does not exist"));
         }
 
-        return ResponseEntity.status(200).body(new ApiMessage("Success"));
+        return ResponseEntity.ok(new ApiMessage("Success"));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@PathVariable int id){
-        if( this.merchantService.delete(id)) {
-            return ResponseEntity.status(200).body(new ApiMessage("Success"));
+public ResponseEntity<?> deleteMerchant(@PathVariable int id) {
+        if (merchantService.delete(id)) {
+            return ResponseEntity.ok(new ApiMessage("Success"));
         }
-        return ResponseEntity.status(400).body(new ApiMessage("BadRequest"));
+        return ResponseEntity.badRequest().body(new ApiMessage("BadRequest"));
     }
 
-    public ArrayList<String> getAllErrors(Errors errors){
-        ArrayList<String> getAllErrors = this.merchantService.checkErrors(errors);
-        return getAllErrors;
+    private List<String> getAllErrors(Errors errors) {
+        List<String> allErrors = new ArrayList<>();
+        errors.getAllErrors().forEach(error -> allErrors.add(error.getDefaultMessage()));
+        return allErrors;
     }
 }
