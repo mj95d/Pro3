@@ -18,65 +18,66 @@ public class MerchantStockController {
 
     private final MerchantStockService merchantStockService;
 
-    @GetMapping("/getAll")
-    public ResponseEntity getAll(){
-        ArrayList<MerchantStock> merchantStocks = this.merchantStockService.getAll();
-        return ResponseEntity.status(200).body(merchantStocks);
+    @GetMapping("/all")
+    public ResponseEntity<List<MerchantStock>> getAllMerchantStocks() {
+        List<MerchantStock> merchantStocks = merchantStockService.getAll();
+        return ResponseEntity.ok(merchantStocks);
     }
 
     @PostMapping("/add")
-    public ResponseEntity add(@Valid @RequestBody MerchantStock merchantStock, Errors errors){
-        if(getAllErrors(errors) != null){
-            return ResponseEntity.status(400).body(getAllErrors(errors));
+    public ResponseEntity<?> addMerchantStock(@Valid @RequestBody MerchantStock merchantStock, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(getAllErrors(errors));
         }
 
-        if(this.merchantStockService.checkId(Integer.parseInt(merchantStock.getId())) != null){
-            return ResponseEntity.status(400).body(new ApiMessage(this.merchantStockService.checkId(Integer.parseInt(merchantStock.getId()))));
+        if (merchantStockService.checkId(Integer.parseInt(merchantStock.getId())) != null) {
+            return ResponseEntity.badRequest().body(new ApiMessage(merchantStockService.checkId(Integer.parseInt(merchantStock.getId()))));
         }
 
-        if(this.merchantStockService.getProduct(merchantStock) == null){
-            return ResponseEntity.status(400).body(new ApiMessage("This productId not found"));
+        if (merchantStockService.getProduct(merchantStock) == null) {
+            return ResponseEntity.badRequest().body(new ApiMessage("Product not found"));
         }
 
-        if(this.merchantStockService.getMerchant(merchantStock) == null){
-            return ResponseEntity.status(400).body(new ApiMessage("This merchantId not found"));
+        if (merchantStockService.getMerchant(merchantStock) == null) {
+            return ResponseEntity.badRequest().body(new ApiMessage("Merchant not found"));
         }
 
-        this.merchantStockService.add(merchantStock);
-        return ResponseEntity.status(200).body(new ApiMessage("Success"));
+        merchantStockService.add(merchantStock);
+        return ResponseEntity.ok(new ApiMessage("Success"));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity update(@PathVariable int id, @Valid @RequestBody MerchantStock merchantStock, Errors errors){
-        if(getAllErrors(errors) != null){
-            return ResponseEntity.status(400).body(getAllErrors(errors));
+    public ResponseEntity<?> updateMerchantStock(@PathVariable int id, @Valid @RequestBodyMerchantStock merchantStock, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(getAllErrors(errors));
         }
 
-        if(!this.merchantStockService.update(id, merchantStock)){
-            return ResponseEntity.status(400).body(new ApiMessage("this id is not Exist"));
+        if (!merchantStockService.update(id, merchantStock)) {
+            return ResponseEntity.badRequest().body(new ApiMessage("Merchant stock not found"));
         }
 
-        if(this.merchantStockService.getProduct(merchantStock) == null){
-            return ResponseEntity.status(400).body(new ApiMessage("This productId not found"));
+        if (merchantStockService.getProduct(merchantStock) == null) {
+            return ResponseEntity.badRequest().body(new ApiMessage("Product not found"));
         }
 
-        if(this.merchantStockService.getMerchant(merchantStock) == null){
-            return ResponseEntity.status(400).body(new ApiMessage("This merchantId not found"));
+        if (merchantStockService.getMerchant(merchantStock) == null) {
+            return ResponseEntity.badRequest().body(new ApiMessage("Merchant not found"));
         }
 
-        return ResponseEntity.status(200).body(new ApiMessage("Success"));
+        return ResponseEntity.ok(new ApiMessage("Success"));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@PathVariable int id){
-        if( this.merchantStockService.delete(id)) {
-            return ResponseEntity.status(200).body(new ApiMessage("Success"));
+    public ResponseEntity<?> deleteMerchantStock(@PathVariable int id) {
+        if (merchantStockService.delete(id)) {
+            return ResponseEntity.ok(new ApiMessage("Success"));
         }
-        return ResponseEntity.status(400).body(new ApiMessage("BadRequest"));
+        return ResponseEntity.badRequest().body(new ApiMessage("Merchant stock not found"));
     }
 
-    public ArrayList<String> getAllErrors(Errors errors){
-        ArrayList<String> getAllErrors = this.merchantStockService.checkErrors(errors);
-        return getAllErrors;
+    private List<String> getAllErrors(Errors errors) {
+        List<String> allErrors = new ArrayList<>();
+        errors.getAllErrors().forEach(error -> allErrors.add(error.getDefaultMessage()));
+        return allErrors;
     }
 }
